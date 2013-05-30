@@ -2,15 +2,9 @@
 # author : Florian Vilpoix
 # https://github.com/fvilpoix
 
-function isBranchMerged() {
-    gb=$(git branch -r --no-merged|grep $1|tr -d ' ')
-    [[ $gb == $1 ]] && return 1 || return 0
-}
-
-function hasBranch() {
-    gb=$(git branch -r |grep $1|tr -d ' ')
-    [[ $gb == $1 ]] && return 0 || return 1
-}
+# from http://stackoverflow.com/questions/59895/can-a-bash-script-tell-what-directory-its-stored-in
+SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "$SCRIPTDIR/tools.sh"
 
 function printHelp() {
     echo 'usage: ./gitmerge.sh [-p|--prefixes "prefixes"] "branches"
@@ -47,7 +41,7 @@ if [ $# == 0 ] ; then echo "Please provide branches" >&2 ; exit 1 ; fi
 
 branches=$(echo $1 | tr " " "\n");
 
-currentBranch=`git rev-parse --abbrev-ref HEAD`
+currentBranch=$(gitCurrentBranch)
 
 # update local database
 git fetch
@@ -58,18 +52,14 @@ do
     do
         branch=$prefix$ticket
 
-        if hasBranch $branch; then
+        if gitHasBranch $branch; then
 
             echo "> [$branch]"
-            if isBranchMerged $branch; then
+            if gitIsBranchMerged $branch; then
                 echo "already merged"
             else
                 echo "not merged"
-                git merge $branch -m "Merge remote-tracking branch '$branch' into $currentBranch"
-                if [[ `git status` == *"You have unmerged paths"* ]]; then
-                    echo "/!\ You have to resolve conflicts. Relaunch script when merge is done."
-                    exit;
-                fi
+                gitMergeBranch $branch $currentBranch
             fi
         fi
     done
