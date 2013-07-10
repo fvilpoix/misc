@@ -60,6 +60,11 @@ do
             else
                 echo "not merged"
                 gitMergeBranch $branch $currentBranch
+
+                if gitHasMergeConflicts; then
+                    echo "/!\ You have to resolve conflicts. Relaunch script when merge is done."
+                    exit;
+                fi
             fi
         fi
     done
