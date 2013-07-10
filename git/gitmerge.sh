@@ -7,10 +7,11 @@ SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "$SCRIPTDIR/tools.sh"
 
 function printHelp() {
-    echo 'usage: ./gitmerge.sh [-p|--prefixes "prefixes"] "branches"
+    echo 'usage: ./gitmerge.sh [--no-rerere] [-h|--help] [-p|--prefixes "prefixes"] "branches"
 
     Options are:
     -p, --prefixes : add all prefixes (separated by space) you want to test with your branch name. Default is empty.
+    --no-rerere    : Do not use rerere git function
     -h, --help     : print this help
 
 examples:
@@ -20,9 +21,10 @@ examples:
 
 # defaults
 PREFIXES=''
+RERERE=1
 
 # arg parsing
-OPTS=`getopt -o hb:p: --long help,prefixes:,branches:\
+OPTS=`getopt -o hb:p: --long help,prefixes:,branches:,no-rerere\
              -n 'gitmerge' -- "$@"`
 eval set -- "$OPTS"
 
@@ -30,6 +32,7 @@ while true; do
   case "$1" in
     -h | --help) printHelp; exit 0 ;;
     -p | --prefixes) PREFIXES="$2"; shift 2 ;;
+    --no-rerere)  RERERE=0; shift 1 ;;
     -- ) shift; break ;;
     * ) break ;;
   esac
@@ -59,7 +62,7 @@ do
                 echo "already merged"
             else
                 echo "not merged"
-                gitMergeBranch $branch $currentBranch
+                gitMergeBranch $branch $currentBranch $RERERE
 
                 if gitHasMergeConflicts; then
                     echo "/!\ You have to resolve conflicts. Relaunch script when merge is done."

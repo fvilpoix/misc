@@ -22,6 +22,11 @@ function gitHasMergeConflicts() {
 }
 
 function gitMergeBranch() {
-    git merge $1 -m "Merge remote-tracking branch '$1' into $2"
+    options=''
+    if [[ $3 == 0 ]] ; then
+        options+=" --no-rerere-autoupdate";
+    fi
+
+    git merge $1 $options -m "Merge remote-tracking branch '$1' into $2"
     return 0
 }
