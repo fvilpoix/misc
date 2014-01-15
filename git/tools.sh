@@ -18,7 +18,7 @@ function gitCurrentBranch() {
 }
 
 function gitHasMergeConflicts() {
-    [[ `git status` == *"You have unmerged paths"* ]] && return 0 || return 1
+    [[ `LANG=EN_US git status` == *"You have unmerged paths"* ]] && return 0 || return 1
 }
 
 function gitMergeBranch() {

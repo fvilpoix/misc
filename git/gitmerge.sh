@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # author : Florian Vilpoix
 # https://github.com/fvilpoix
 
@@ -14,6 +14,10 @@ function printHelp() {
     --no-rerere    : Do not use rerere git function
     -h, --help     : print this help
 
+Installation:
+
+Needs getopt(3) (gnu-getopt)
+
 examples:
     ./gitmerge.sh -p "origin/ upstream/" "feature1 feature2"'
     exit 0
@@ -24,7 +28,7 @@ PREFIXES=''
 RERERE=1
 
 # arg parsing
-OPTS=`getopt -o hb:p: --long help,prefixes:,branches:,no-rerere\
+OPTS=`getopt -o hp: --long help,prefixes:,no-rerere\
              -n 'gitmerge' -- "$@"`
 eval set -- "$OPTS"
 
